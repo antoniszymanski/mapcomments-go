@@ -25,6 +25,7 @@ type cli struct {
 	Output  string `short:"W" type:"path" default:"commentmap_gen.go"`
 
 	WithFullComment bool
+	Mpl2            bool `name:"mpl2"`
 }
 
 type entry struct {
@@ -67,9 +68,11 @@ func (c *cli) Run() error {
 	if err := tmpl.Execute(&buf, struct {
 		Package    string
 		CommentMap map[string]string
+		Mpl2       bool
 	}{
 		Package:    c.Package,
 		CommentMap: r.CommentMap,
+		Mpl2:       c.Mpl2,
 	}); err != nil {
 		return err
 	}
