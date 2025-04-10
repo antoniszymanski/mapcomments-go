@@ -21,6 +21,7 @@ Flags:
   -P, --package="main"
   -W, --output="commentmap_gen.go"
       --with-full-comment
+      --mpl2
 
 mapcomments: error: expected "<entries> ..."
 ```
