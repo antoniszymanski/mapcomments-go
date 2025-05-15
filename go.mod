@@ -3,7 +3,7 @@ module github.com/antoniszymanski/mapcomments-go
 go 1.24.1
 
 require (
-	github.com/alecthomas/kong v1.10.0
+	github.com/alecthomas/kong v1.11.0
 	github.com/invopop/jsonschema v0.13.0
 )
 
