@@ -15,11 +15,11 @@ import (
 	"text/template"
 
 	"github.com/alecthomas/kong"
-	"github.com/invopop/jsonschema"
+	"github.com/antoniszymanski/mapcomments-go"
 )
 
 type cli struct {
-	Entries []entry `arg:""`
+	Packages []string `arg:""`
 
 	Package string `short:"P" default:"main"`
 	Output  string `short:"W" type:"path" default:"commentmap_gen.go"`
@@ -28,37 +28,19 @@ type cli struct {
 	MPL2            bool `name:"mpl2"`
 }
 
-type entry struct {
-	Base, Path string
-}
-
-func (e *entry) Decode(ctx *kong.DecodeContext) error {
-	err := ctx.Scan.PopValueInto("base", &e.Base)
-	if err != nil {
-		return err
-	}
-
-	return ctx.Scan.PopValueInto("path", &e.Path)
-}
-
-//go:embed mapcomments.go.tmpl
+//go:embed commentmap.tmpl
 var tmplSource string
 
 var tmpl = template.Must(
-	template.New("mapcomments").
+	template.New("commentmap").
 		Funcs(template.FuncMap{"quote": strconv.Quote}).
 		Parse(tmplSource),
 )
 
 func (c *cli) Run() error {
-	var opts []jsonschema.CommentOption
-	if c.WithFullComment {
-		opts = append(opts, jsonschema.WithFullComment())
-	}
-
-	var r jsonschema.Reflector
-	for _, entry := range c.Entries {
-		err := r.AddGoComments(entry.Base, entry.Path, opts...)
+	commentMap := make(map[string]string)
+	for _, path := range c.Packages {
+		err := mapcomments.AddGoComments(commentMap, path, c.WithFullComment)
 		if err != nil {
 			return err
 		}
@@ -71,7 +53,7 @@ func (c *cli) Run() error {
 		MPL2       bool
 	}{
 		Package:    c.Package,
-		CommentMap: r.CommentMap,
+		CommentMap: commentMap,
 		MPL2:       c.MPL2,
 	}); err != nil {
 		return err
@@ -87,11 +69,7 @@ func (c *cli) Run() error {
 	} else {
 		_, err = os.Stdout.Write(data)
 	}
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func main() {
