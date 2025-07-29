@@ -25,7 +25,6 @@ type cli struct {
 	Output  string `short:"W" type:"path" default:"commentmap_gen.go"`
 
 	WithFullComment bool
-	MPL2            bool `name:"mpl2"`
 }
 
 //go:embed commentmap.tmpl
@@ -50,11 +49,9 @@ func (c *cli) Run() error {
 	if err := tmpl.Execute(&buf, struct {
 		Package    string
 		CommentMap map[string]string
-		MPL2       bool
 	}{
 		Package:    c.Package,
 		CommentMap: commentMap,
-		MPL2:       c.MPL2,
 	}); err != nil {
 		return err
 	}
