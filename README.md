@@ -5,7 +5,7 @@ A CLI tool that extracts comments from Go files and generates a Go file with the
 ### Installation:
 
 ```
-go install github.com/antoniszymanski/mapcomments-go@latest
+go install github.com/antoniszymanski/mapcomments-go/cmd/mapcomments@latest
 ```
 
 ### Usage:
