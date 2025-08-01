@@ -1,5 +1,11 @@
 {
-  "template": "### Changelog:\n\n#{{UNCATEGORIZED}}\n\n**Full changelog**: #{{RELEASE_DIFF}}",
+  "template": "#{{CHANGELOG}}\n\n**Full changelog**: #{{RELEASE_DIFF}}",
   "empty_template": "### Changelog:\n\n- no changes",
-  "commit_template": "- #{{TITLE}} by @#{{AUTHOR}} in #{{MERGE_SHA}}"
+  "commit_template": "- #{{TITLE}} by @#{{AUTHOR}} in #{{MERGE_SHA}}",
+  "categories": [
+    {
+      "title": "### Changelog:",
+      "labels": []
+    }
+  ]
 }
