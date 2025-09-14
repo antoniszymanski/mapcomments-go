@@ -4,36 +4,22 @@
 package mapcomments
 
 import (
-	"errors"
 	"go/ast"
 	"go/doc"
 	"strings"
 
+	"github.com/antoniszymanski/loadpackage-go"
 	"golang.org/x/tools/go/packages"
 )
 
 func AddGoComments(commentMap map[string]string, path string, withFullComment bool) error {
-	// https://pkg.go.dev/cmd/go#hdr-Package_lists_and_patterns
-	// https://pkg.go.dev/golang.org/x/tools/go/packages#pkg-overview
-	switch path {
-	case "main", "all", "std", "cmd", "tool":
-		return errors.New("path cannot be a reserved name")
-	}
-	if strings.Contains(path, "...") {
-		return errors.New("path cannot contain wildcards")
-	}
-
 	cfg := &packages.Config{
 		Mode: packages.NeedName |
 			packages.NeedFiles |
 			packages.NeedSyntax,
 	}
-	pkgs, err := packages.Load(cfg, "pattern="+path)
+	pkg, err := loadpackage.Load("pattern="+path, cfg)
 	if err != nil {
-		return err
-	}
-	pkg := pkgs[0]
-	if err = newPackageError(pkg); err != nil {
 		return err
 	}
 
@@ -91,46 +77,4 @@ func AddGoComments(commentMap map[string]string, path string, withFullComment bo
 		})
 	}
 	return nil
-}
-
-func newPackageError(pkg *packages.Package) error {
-	if len(pkg.Errors) == 0 && (pkg.Module == nil || pkg.Module.Error == nil) {
-		return nil
-	}
-
-	var err PackageError
-	err.Errors = pkg.Errors
-	if pkg.Module != nil && pkg.Module.Error != nil {
-		err.ModuleError = pkg.Module.Error
-	}
-	return err
-}
-
-type PackageError struct {
-	Errors      []packages.Error
-	ModuleError *packages.ModuleError
-}
-
-// Based on [packages.PrintErrors]
-func (e PackageError) Error() string {
-	var sb strings.Builder
-
-	for _, pkgErr := range e.Errors {
-		sb.WriteString(pkgErr.Error())
-		sb.WriteByte('\n')
-	}
-	if e.ModuleError != nil {
-		sb.WriteString(e.ModuleError.Err)
-		sb.WriteByte('\n')
-	}
-
-	return strings.TrimSuffix(sb.String(), "\n")
-}
-
-func (e PackageError) Unwrap() []error {
-	pkgErrs := make([]error, 0, len(e.Errors))
-	for _, pkgErr := range e.Errors {
-		pkgErrs = append(pkgErrs, pkgErr)
-	}
-	return pkgErrs
 }

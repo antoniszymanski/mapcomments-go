@@ -4,6 +4,7 @@ go 1.24.4
 
 require (
 	github.com/alecthomas/kong v1.12.1
+	github.com/antoniszymanski/loadpackage-go v0.1.0
 	golang.org/x/tools v0.37.0
 )
 
