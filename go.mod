@@ -1,10 +1,10 @@
 module github.com/antoniszymanski/mapcomments-go
 
-go 1.24.4
+go 1.24.6
 
 require (
 	github.com/alecthomas/kong v1.12.1
-	github.com/antoniszymanski/loadpackage-go v0.1.0
+	github.com/antoniszymanski/loadpackage-go v0.1.1
 	golang.org/x/tools v0.37.0
 )
 
