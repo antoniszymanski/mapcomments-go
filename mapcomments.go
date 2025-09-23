@@ -4,6 +4,7 @@
 package mapcomments
 
 import (
+	"errors"
 	"go/ast"
 	"go/doc"
 	"strings"
@@ -13,6 +14,10 @@ import (
 )
 
 func AddGoComments(commentMap map[string]string, path string, withFullComment bool) error {
+	if commentMap == nil {
+		return errors.New("commentMap is nil")
+	}
+
 	cfg := &packages.Config{
 		Mode: packages.NeedName |
 			packages.NeedFiles |
