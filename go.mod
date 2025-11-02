@@ -1,6 +1,6 @@
 module github.com/antoniszymanski/mapcomments-go
 
-go 1.24.6
+go 1.24.9
 
 require (
 	github.com/alexflint/go-arg v1.6.0
