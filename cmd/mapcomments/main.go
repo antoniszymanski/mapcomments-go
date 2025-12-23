@@ -36,7 +36,7 @@ func main() {
 	switch err = p.Parse(flags); {
 	case err == arg.ErrHelp:
 		p.WriteHelp(cfg.Out)
-		os.Exit(0) //nolint:gocritic // exitAfterDefer
+		os.Exit(0)
 	case err != nil:
 		p.WriteHelp(cfg.Out)
 		printErr(err)
