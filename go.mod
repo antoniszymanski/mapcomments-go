@@ -4,7 +4,7 @@ go 1.24.9
 
 require (
 	github.com/alexflint/go-arg v1.6.1
-	github.com/antoniszymanski/loadpackage-go v0.1.3
+	github.com/antoniszymanski/loadpackage-go v0.1.4
 	golang.org/x/tools v0.41.0
 )
 
