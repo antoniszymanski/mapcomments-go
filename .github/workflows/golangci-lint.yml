@@ -1,4 +1,4 @@
-name: Run golangci-lint
+name: golangci-lint
 
 on:
   pull_request:
@@ -12,7 +12,6 @@ on:
 
 jobs:
   golangci-lint:
-    name: Run golangci-lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
