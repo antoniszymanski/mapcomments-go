@@ -5,6 +5,7 @@ package mapcomments
 
 import (
 	"errors"
+	"fmt"
 	"go/ast"
 	"go/doc"
 	"strings"
@@ -25,14 +26,14 @@ func AddGoComments(commentMap map[string]string, path string, withFullComment bo
 	}
 	pkg, err := loadpackage.Load("pattern="+path, cfg)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to load the package: %w", err)
 	}
 
 	var pkgDoc *doc.Package
 	if !withFullComment {
 		pkgDoc, err = doc.NewFromFiles(pkg.Fset, pkg.Syntax, pkg.PkgPath, doc.PreserveAST)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to compute documentation for a package: %w", err)
 		}
 	}
 
@@ -69,10 +70,9 @@ func AddGoComments(commentMap map[string]string, path string, withFullComment bo
 				if typeName == "" || text == "" {
 					break
 				}
-				for _, name := range node.Names {
-					if name.IsExported() {
-						fieldName := name.Name
-						commentMap[pkg.PkgPath+"."+typeName+"."+fieldName] = text
+				for _, field := range node.Names {
+					if field.IsExported() {
+						commentMap[pkg.PkgPath+"."+typeName+"."+field.Name] = text
 					}
 				}
 			case *ast.GenDecl:

@@ -4,6 +4,7 @@
 package main
 
 import (
+	"fmt"
 	"go/format"
 	"os"
 	"strconv"
@@ -34,7 +35,7 @@ func (cli *Cli) Run() error {
 	for _, path := range cli.Packages {
 		err := mapcomments.AddGoComments(commentMap, path, cli.WithFullComment)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to add Go comments: %w", err)
 		}
 	}
 
@@ -54,7 +55,7 @@ func (cli *Cli) Run() error {
 
 	data, err := format.Source(b)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to format the generated code: %w", err)
 	}
 
 	if cli.Output == "-" {
@@ -62,5 +63,8 @@ func (cli *Cli) Run() error {
 	} else {
 		err = os.WriteFile(cli.Output, data, 0600)
 	}
-	return err
+	if err != nil {
+		return fmt.Errorf("failed to write to the file: %w", err)
+	}
+	return nil
 }
