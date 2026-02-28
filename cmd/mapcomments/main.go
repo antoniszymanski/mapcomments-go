@@ -8,43 +8,25 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/alexflint/go-arg"
+	"github.com/alecthomas/kong"
 	"github.com/antoniszymanski/mapcomments-go"
 )
 
 type Cli struct {
-	Packages        []string `arg:"required,positional"`
-	Package         string   `arg:"-P" default:"main"`
-	Output          string   `arg:"-O" default:"commentmap_gen.go"`
-	WithFullComment bool     `arg:"--with-full-comment"`
+	Packages        []string `arg:""`
+	Package         string   `short:"P" default:"main"`
+	Output          string   `short:"O" type:"path" default:"commentmap_gen.go"`
+	WithFullComment bool
 }
 
 func main() {
-	cfg := arg.Config{
-		Program: "mapcomments",
-		Out:     os.Stderr,
-	}
 	var cli Cli
-	p, err := arg.NewParser(cfg, &cli)
-	if err != nil {
-		panic(err)
-	}
-	var flags []string
-	if len(os.Args) > 0 {
-		flags = os.Args[1:]
-	}
-	switch err = p.Parse(flags); {
-	case err == arg.ErrHelp:
-		p.WriteHelp(cfg.Out)
-		os.Exit(0)
-	case err != nil:
-		p.WriteHelp(cfg.Out)
-		printErr(err)
-		os.Exit(2)
-	}
-	if err = cli.Run(); err != nil {
-		printErr(err)
-	}
+	ctx := kong.Parse(&cli,
+		kong.Name("mapcomments"),
+		kong.Description("A tool that extracts comments from Go files and generates a Go file with them as a map"),
+		kong.UsageOnError(),
+	)
+	ctx.FatalIfErrorf(ctx.Run())
 }
 
 func (cli *Cli) Run() error {
@@ -75,17 +57,10 @@ func (cli *Cli) Run() error {
 		return err
 	}
 
-	if cli.Output != "-" {
-		err = os.WriteFile(cli.Output, data, 0600)
-	} else {
+	if cli.Output == "-" {
 		_, err = os.Stdout.Write(data)
+	} else {
+		err = os.WriteFile(cli.Output, data, 0600)
 	}
 	return err
-}
-
-//nolint:errcheck
-func printErr(err error) {
-	os.Stderr.WriteString("error: ")
-	os.Stderr.WriteString(err.Error())
-	os.Stderr.WriteString("\n")
 }
