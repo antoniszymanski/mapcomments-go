@@ -1,6 +1,6 @@
 module github.com/antoniszymanski/mapcomments-go
 
-go 1.24.9
+go 1.25.8
 
 require (
 	github.com/alecthomas/kong v1.14.0
