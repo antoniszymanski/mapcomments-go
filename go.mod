@@ -4,7 +4,7 @@ go 1.25.8
 
 require (
 	github.com/alecthomas/kong v1.15.0
-	github.com/antoniszymanski/loadpackage-go v0.1.6
+	github.com/antoniszymanski/loadpackage-go v0.1.7
 	golang.org/x/tools v0.45.0
 )
 
